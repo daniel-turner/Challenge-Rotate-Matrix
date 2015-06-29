@@ -58,10 +58,14 @@ MatrixRotator.prototype.rotate = function(direction) {
 
     var tempColumns = populateColumns(inMatrix);
 
+    console.log(inMatrix);
+
     for(var i = 0; i < tempColumns.length; i++) {
 
       inMatrix[i] = tempColumns[tempColumns.length - 1 - i];
     }
+
+    // console.log(inMatrix);
 
     return inMatrix;
   };
