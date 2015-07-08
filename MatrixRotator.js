@@ -12,151 +12,34 @@ exports.MatrixRotator = MatrixRotator;
 var Direction = require("./Direction").Direction;
 
 function MatrixRotator(matrix){
+
   this.matrix = matrix;
 
-};
+  this.validateInputs =  function(direction, radius) {
 
-//                                         |-- Must be Direction.CW
-//                                         v        or Direction.CCW
-MatrixRotator.prototype.rotate = function(direction, radius) {
+    if(direction !== Direction.CW && direction !== Direction.CCW) {
 
-  if(direction !== Direction.CW && direction !== Direction.CCW) {
+      throw new Error("MatrixRotator did not receive a valid direction.");
+    }
 
-    throw new Error("MatrixRotator did not receive a valid direction.");
-  }
+    if(radius === undefined) {
 
-  if(radius === undefined) {
+      radius = 0;
 
-    radius = 0;
+    } else if(!(radius > 0 && radius <= Math.floor(this.matrix.length / 2))) {
 
-  } else if(!(radius > 0 && radius <= Math.floor(this.matrix.length / 2))) {
+      throw new RangeError("MatrixRotator received an invalid radius");
+    }
 
-    throw new RangeError("MatrixRotator received an invalid radius");
-  }
+    if(typeof radius !== "number") {
 
-  if(typeof radius !== "number") {
+      throw new TypeError("MatrixRotator did not receive a number as radius");
+    }
 
-    throw new TypeError("MatrixRotator did not receive a number as radius");
-  }
-
-  var center = Math.floor(this.matrix.length / 2);
-
-  var validStartIndex = center - radius;
-  var validEndIndex = center + radius - Math.ceil(center%2);
-  var invalidStartIndex = validStartIndex + 1;
-  var invalidEndIndex = validEndIndex - 1;
-
-  switch(direction) {
-
-    case Direction.CW:
-
-      return rotateClockwise(this.matrix, radius);
-      break;
-
-    case Direction.CCW:
-
-       return rotateCounterClockwise(this.matrix, radius);
-      break;
-
-    default:
-
-      throw new Error("MatrixRotator could not perform rotation");
+    return radius;
   };
 
-  function isInOuterBox(indexI, indexJ) {
-
-    if( indexI >= validStartIndex &&
-        indexI <= validEndIndex &&
-        indexJ >= validStartIndex &&
-        indexJ <= validEndIndex) {
-
-      return true;
-
-    } else {
-
-      return false;
-    }
-  };
-
-  function isInInnerBox(indexI, indexJ) {
-
-    if(invalidStartIndex > invalidEndIndex) {
-
-      return false;
-    }
-
-    if( indexI >= invalidStartIndex &&
-        indexI <= invalidEndIndex &&
-        indexJ >= invalidStartIndex &&
-        indexJ <= invalidEndIndex) {
-
-      return true;
-
-    } else {
-
-      return false;
-    }
-  };
-
-  function rotateClockwise(inMatrix, radius) {
-
-    var tempColumns = populateColumns(inMatrix);
-    var tempMatrix = [];
-
-    for(var i = 0; i < tempColumns.length; i++) {
-
-      tempMatrix.push(tempColumns[i].reverse());
-    }
-
-    if(radius === 0) {
-
-      return tempMatrix;
-    }
-
-    for(var i = 0; i < tempMatrix.length; i++) {
-
-      for(var j = 0; j < tempMatrix.length; j++) {
-
-        if(!isInOuterBox(i,j) || isInInnerBox(i,j)) {
-
-          tempMatrix[i][j] = inMatrix[i][j];
-        }
-      }
-    }
-
-    return tempMatrix;
-  };
-
-  function rotateCounterClockwise(inMatrix, radius) {
-
-    var tempColumns = populateColumns(inMatrix);
-    var tempMatrix = [];
-
-    for(var i = 0; i < tempColumns.length; i++) {
-
-      tempMatrix.push(tempColumns[tempColumns.length - 1 - i]);
-    }
-
-    if(radius === 0) {
-
-      return tempMatrix;
-    }
-
-    for(var i = 0; i < tempMatrix.length; i++) {
-
-      for(var j = 0; j < tempMatrix.length; j++) {
-
-        if(!isInOuterBox(i,j) || isInInnerBox(i,j)) {
-
-          tempMatrix[i][j] = inMatrix[i][j];
-        }
-      }
-    }
-
-    return tempMatrix;
-  };
-
-  function populateColumns(matrix) {
+  this.populateColumns =  function(matrix) {
 
     var tempColumns = [];
 
@@ -175,12 +58,229 @@ MatrixRotator.prototype.rotate = function(direction, radius) {
 
     return tempColumns;
   };
+
+  this.isInOuterBox = function(indexI, indexJ, validStartIndex, validEndIndex) {
+
+    if( indexI >= validStartIndex &&
+        indexI <= validEndIndex &&
+        indexJ >= validStartIndex &&
+        indexJ <= validEndIndex) {
+
+      return true;
+
+    } else {
+
+      return false;
+    }
+  };
+
+  this.isInInnerBox = function(indexI, indexJ, invalidStartIndex, invalidEndIndex) {
+
+    if(invalidStartIndex > invalidEndIndex) {
+
+      return false;
+    }
+
+    if( indexI >= invalidStartIndex &&
+        indexI <= invalidEndIndex &&
+        indexJ >= invalidStartIndex &&
+        indexJ <= invalidEndIndex) {
+
+      return true;
+
+    } else {
+
+      return false;
+    }
+  };
+};
+
+//                                         |-- Must be Direction.CW
+//                                         v        or Direction.CCW
+MatrixRotator.prototype.rotate = function(direction, radius) {
+
+  radius = this.validateInputs(direction,radius);
+
+  var center = Math.floor(this.matrix.length / 2);
+
+  var validStartIndex = center - radius;
+  var validEndIndex = center + radius - Math.ceil(center%2);
+  var invalidStartIndex = validStartIndex + 1;
+  var invalidEndIndex = validEndIndex - 1;
+  var tempColumns = this.populateColumns(this.matrix);
+  var isInInnerBox = this.isInInnerBox;
+  var isInOuterBox = this.isInOuterBox;
+
+  switch(direction) {
+
+    case Direction.CW:
+
+      return rotateClockwise(this.matrix, radius, tempColumns);
+      break;
+
+    case Direction.CCW:
+
+       return rotateCounterClockwise(this.matrix, radius, tempColumns);
+      break;
+
+    default:
+
+      throw new Error("MatrixRotator could not perform rotation");
+  };
+
+  function rotateClockwise(inMatrix, radius, tempColumns) {
+
+    var tempMatrix = [];
+
+    for(var i = 0; i < tempColumns.length; i++) {
+
+      tempMatrix.push(tempColumns[i].reverse());
+    }
+
+    if(radius === 0) {
+
+      console.log(tempMatrix);
+
+      return tempMatrix;
+    }
+
+    for(var i = 0; i < tempMatrix.length; i++) {
+
+      for(var j = 0; j < tempMatrix.length; j++) {
+
+        if(!isInOuterBox(i, j, validStartIndex, validEndIndex) || isInInnerBox(i, j, invalidStartIndex, invalidEndIndex)) {
+
+          tempMatrix[i][j] = inMatrix[i][j];
+        }
+      }
+    }
+
+    console.log(tempMatrix);
+    return tempMatrix;
+  };
+
+  function rotateCounterClockwise(inMatrix, radius, tempColumns) {
+
+    var tempMatrix = [];
+
+    for(var i = 0; i < tempColumns.length; i++) {
+
+      tempMatrix.push(tempColumns[tempColumns.length - 1 - i]);
+    }
+
+    if(radius === 0) {
+
+      console.log(tempMatrix);
+      return tempMatrix;
+    }
+
+    for(var i = 0; i < tempMatrix.length; i++) {
+
+      for(var j = 0; j < tempMatrix.length; j++) {
+
+        if(!isInOuterBox(i, j, validStartIndex, validEndIndex) || isInInnerBox(i, j, invalidStartIndex, invalidEndIndex)) {
+
+          tempMatrix[i][j] = inMatrix[i][j];
+        }
+      }
+    }
+
+    console.log(tempMatrix);
+    return tempMatrix;
+  };
 };
 
 //                    Must be Direction.CW               |-- Must be a valid Number
 //                        or Direction.CCW ---v          v   between 1 and [radius]
-MatrixRotator.prototype.rotateStep = function(direction, layer) {
-  // do work here
+MatrixRotator.prototype.rotateStep = function(direction, radius) {
 
+  radius = this.validateInputs(direction,radius);
 
+  var center = Math.floor(this.matrix.length / 2);
+
+  var validStartIndex = center - radius;
+  var validEndIndex = center + radius - Math.ceil(center%2);
+  var invalidStartIndex = validStartIndex + 1;
+  var invalidEndIndex = validEndIndex - 1;
+  var tempColumns = this.populateColumns(this.matrix);
+  var isInInnerBox = this.isInInnerBox;
+  var isInOuterBox = this.isInOuterBox;
+
+  switch(direction) {
+
+    case Direction.CW:
+
+      return rotateClockwise(this.matrix, radius, tempColumns);
+      break;
+
+    case Direction.CCW:
+
+       return rotateCounterClockwise(this.matrix, radius, tempColumns);
+      break;
+
+    default:
+
+      throw new Error("MatrixRotator could not perform rotation");
+  };
+
+  function rotateClockwise(inMatrix, radius, tempColumns) {
+
+    var tempMatrix = [];
+
+    for(var i = 0; i < tempColumns.length; i++) {
+
+      tempMatrix.push(tempColumns[i].reverse());
+    }
+
+    if(radius === 0) {
+
+      console.log(tempMatrix);
+
+      return tempMatrix;
+    }
+
+    for(var i = 0; i < tempMatrix.length; i++) {
+
+      for(var j = 0; j < tempMatrix.length; j++) {
+
+        if(!isInOuterBox(i, j, validStartIndex, validEndIndex) || isInInnerBox(i, j, invalidStartIndex, invalidEndIndex)) {
+
+          tempMatrix[i][j] = inMatrix[i][j];
+        }
+      }
+    }
+
+    console.log(tempMatrix);
+    return tempMatrix;
+  };
+
+  function rotateCounterClockwise(inMatrix, radius, tempColumns) {
+
+    var tempMatrix = [];
+
+    for(var i = 0; i < tempColumns.length; i++) {
+
+      tempMatrix.push(tempColumns[tempColumns.length - 1 - i]);
+    }
+
+    if(radius === 0) {
+
+      console.log(tempMatrix);
+      return tempMatrix;
+    }
+
+    for(var i = 0; i < tempMatrix.length; i++) {
+
+      for(var j = 0; j < tempMatrix.length; j++) {
+
+        if(!isInOuterBox(i, j, validStartIndex, validEndIndex) || isInInnerBox(i, j, invalidStartIndex, invalidEndIndex)) {
+
+          tempMatrix[i][j] = inMatrix[i][j];
+        }
+      }
+    }
+
+    console.log(tempMatrix);
+    return tempMatrix;
+  };
 };

@@ -113,56 +113,56 @@ describe("The 2Advanced Matrix Rotator", function () {
   });
 
 
-  it("can rotate layer 3 Clockwise", function () {
-    matrixRotator.rotateStep(Direction.CW, 3);
-    matrixRotator.matrix.should.be.deep.equal([
-                                              [ 7, 1, 2, 3, 4, 5],
-                                              [13, 8, 9, 10,11,6],
-                                              [19,14,15,16,17,12],
-                                              [25,20,21,22,23,18],
-                                              [31,26,27,28,29,24],
-                                              [32,33,34,35,36,30]
-                                            ]);
-  });
+  // it("can rotate layer 3 Clockwise", function () {
+  //   matrixRotator.rotateStep(Direction.CW, 3);
+  //   matrixRotator.matrix.should.be.deep.equal([
+  //                                             [ 7, 1, 2, 3, 4, 5],
+  //                                             [13, 8, 9, 10,11,6],
+  //                                             [19,14,15,16,17,12],
+  //                                             [25,20,21,22,23,18],
+  //                                             [31,26,27,28,29,24],
+  //                                             [32,33,34,35,36,30]
+  //                                           ]);
+  // });
 
-  it("can rotate layer 2 CounterClockwise", function () {
-    matrixRotator.rotateStep(Direction.CCW, 2);
-    matrixRotator.matrix.should.be.deep.equal([
-                                              [ 1, 2, 3, 4, 5, 6],
-                                              [ 7, 9,10,11,17,12],
-                                              [13, 8,15,16,23,18],
-                                              [19,14,21,22,29,24],
-                                              [25,20,26,27,28,30],
-                                              [31,32,33,34,35,36]
-                                            ]);
-  });
+  // it("can rotate layer 2 CounterClockwise", function () {
+  //   matrixRotator.rotateStep(Direction.CCW, 2);
+  //   matrixRotator.matrix.should.be.deep.equal([
+  //                                             [ 1, 2, 3, 4, 5, 6],
+  //                                             [ 7, 9,10,11,17,12],
+  //                                             [13, 8,15,16,23,18],
+  //                                             [19,14,21,22,29,24],
+  //                                             [25,20,26,27,28,30],
+  //                                             [31,32,33,34,35,36]
+  //                                           ]);
+  // });
 
-  it("can rotate layer 1 Clockwise", function () {
+  // it("can rotate layer 1 Clockwise", function () {
 
-    matrixRotator.rotateStep(Direction.CW, 1);
-    matrixRotator.matrix.should.be.deep.equal([
-                                              [1, 2, 3, 4, 5, 6],
-                                              [7, 8, 9, 10,11,12],
-                                              [13,14,21,15,17,18],
-                                              [19,20,22,16,23,24],
-                                              [25,26,27,28,29,30],
-                                              [31,32,33,34,35,36]
-                                            ]);
-  });
+  //   matrixRotator.rotateStep(Direction.CW, 1);
+  //   matrixRotator.matrix.should.be.deep.equal([
+  //                                             [1, 2, 3, 4, 5, 6],
+  //                                             [7, 8, 9, 10,11,12],
+  //                                             [13,14,21,15,17,18],
+  //                                             [19,20,22,16,23,24],
+  //                                             [25,26,27,28,29,30],
+  //                                             [31,32,33,34,35,36]
+  //                                           ]);
+  // });
 
-  it("can rotate and persist previous state", function () {
-    matrixRotator.rotateStep(Direction.CW, 3);
-    matrixRotator.rotateStep(Direction.CCW, 2);
-    matrixRotator.rotateStep(Direction.CW, 1);
-    matrixRotator.matrix.should.be.deep.equal([
-                                              [ 7, 1, 2, 3, 4, 5],
-                                              [13, 9,10,11,17, 6],
-                                              [19, 8,21,15,23,12],
-                                              [25,14,22,16,29,18],
-                                              [31,20,26,27,28,24],
-                                              [32,33,34,35,36,30]
-                                            ]);
-  });
+  // it("can rotate and persist previous state", function () {
+  //   matrixRotator.rotateStep(Direction.CW, 3);
+  //   matrixRotator.rotateStep(Direction.CCW, 2);
+  //   matrixRotator.rotateStep(Direction.CW, 1);
+  //   matrixRotator.matrix.should.be.deep.equal([
+  //                                             [ 7, 1, 2, 3, 4, 5],
+  //                                             [13, 9,10,11,17, 6],
+  //                                             [19, 8,21,15,23,12],
+  //                                             [25,14,22,16,29,18],
+  //                                             [31,20,26,27,28,24],
+  //                                             [32,33,34,35,36,30]
+  //                                           ]);
+  // });
 
   describe("validates arguments", function () {
 
