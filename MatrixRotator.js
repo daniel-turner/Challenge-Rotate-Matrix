@@ -202,20 +202,33 @@ MatrixRotator.prototype.rotateStep = function(direction, radius) {
   var validEndIndex = center + radius - Math.ceil(center%2);
   var invalidStartIndex = validStartIndex + 1;
   var invalidEndIndex = validEndIndex - 1;
-  var tempColumns = this.populateColumns(this.matrix);
+  // var tempColumns = this.populateColumns(this.matrix);
   var isInInnerBox = this.isInInnerBox;
   var isInOuterBox = this.isInOuterBox;
+
+  // console.log(tempColumns);
+  var tempMatrix = [];
+
+  for(var i = 0; i < this.matrix[0].length; i++) {
+
+    tempMatrix.push([]);
+
+    for(var j = 0; j < this.matrix[0].length; j++) {
+
+      tempMatrix[i].push(NaN);
+    }
+  }
 
   switch(direction) {
 
     case Direction.CW:
 
-      return rotateClockwise(this.matrix, radius, tempColumns);
+      return rotateClockwise(this.matrix, radius, tempMatrix);
       break;
 
     case Direction.CCW:
 
-       return rotateCounterClockwise(this.matrix, radius, tempColumns);
+       return rotateCounterClockwise(this.matrix, radius, tempMatrix);
       break;
 
     default:
@@ -223,18 +236,18 @@ MatrixRotator.prototype.rotateStep = function(direction, radius) {
       throw new Error("MatrixRotator could not perform rotation");
   };
 
-  function rotateClockwise(inMatrix, radius, tempColumns) {
+  function rotateClockwise(inMatrix, radius, tempMatrix) {
 
-    var tempMatrix = [];
+    // var tempMatrix = [];
 
-    for(var i = 0; i < tempColumns.length; i++) {
+    // for(var i = 0; i < tempColumns.length; i++) {
 
-      tempMatrix.push(tempColumns[i].reverse());
-    }
+    //   tempMatrix.push(tempColumns[i].reverse());
+    // }
 
     if(radius === 0) {
 
-      console.log(tempMatrix);
+      // console.log(tempMatrix);
 
       return tempMatrix;
     }
@@ -243,29 +256,70 @@ MatrixRotator.prototype.rotateStep = function(direction, radius) {
 
       for(var j = 0; j < tempMatrix.length; j++) {
 
-        if(!isInOuterBox(i, j, validStartIndex, validEndIndex) || isInInnerBox(i, j, invalidStartIndex, invalidEndIndex)) {
+        if((i + j) < tempMatrix.length && i < j) { //top rules
 
-          tempMatrix[i][j] = inMatrix[i][j];
-        }
+          if(i === j) { //skip center
+
+            tempMatrix[i][j] = this.matrix[i][j];
+
+          } else {
+
+            //try up
+            if((i - 1) > -1 && tempMatrix[i-1][j] !== NaN) {
+
+              tempMatrix[i-1][j] = this.matrix[i][j];
+
+            //try right
+            } else { //if( (j + 1) > tempMatrix.length - 1 && tempMatrix[i][j+1] !== NaN) {
+
+              tempMatrix[i][j+1] = this.matrix[i][j];
+            }
+          }
+
+        } else { //bottom rules
+
+          if(i === j) { //skip center
+
+            tempMatrix[i][j] = this.matrix[i][j];
+          } else {
+
+            //try left
+            if((j - 1) > -1 && tempMatrix[i][j-1] !== NaN) {
+
+              tempMatrix[i][j-1] = this.matrix[i][j];
+
+            } else { //try down
+
+              tempMatrix[i+1][j] = this.matrix[i][j];
+            }
+          }
+        };
+
+        console.log(tempMatrix);
+
+        // if(!isInOuterBox(i, j, validStartIndex, validEndIndex) || isInInnerBox(i, j, invalidStartIndex, invalidEndIndex)) {
+
+        //   tempMatrix[i][j] = inMatrix[i][j];
+        // }
       }
     }
 
-    console.log(tempMatrix);
+    // console.log(tempMatrix);
     return tempMatrix;
   };
 
-  function rotateCounterClockwise(inMatrix, radius, tempColumns) {
+  function rotateCounterClockwise(inMatrix, radius, tempMatrix) {
 
-    var tempMatrix = [];
+    // var tempMatrix = [];
 
-    for(var i = 0; i < tempColumns.length; i++) {
+    // for(var i = 0; i < tempColumns.length; i++) {
 
-      tempMatrix.push(tempColumns[tempColumns.length - 1 - i]);
-    }
+    //   tempMatrix.push(tempColumns[tempColumns.length - 1 - i]);
+    // }
 
     if(radius === 0) {
 
-      console.log(tempMatrix);
+      // console.log(tempMatrix);
       return tempMatrix;
     }
 
@@ -280,7 +334,7 @@ MatrixRotator.prototype.rotateStep = function(direction, radius) {
       }
     }
 
-    console.log(tempMatrix);
+    // console.log(tempMatrix);
     return tempMatrix;
   };
 };
