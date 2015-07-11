@@ -206,10 +206,10 @@ MatrixRotator.prototype.rotateStep = function(direction, radius) {
   var isInInnerBox = this.isInInnerBox;
   var isInOuterBox = this.isInOuterBox;
 
-  console.log("valid start " + validStartIndex);
-  console.log("valid end " + validEndIndex);
-  console.log("invalid start " + invalidStartIndex);
-  console.log("invalid end " + invalidEndIndex);
+  // console.log("valid start " + validStartIndex);
+  // console.log("valid end " + validEndIndex);
+  // console.log("invalid start " + invalidStartIndex);
+  // console.log("invalid end " + invalidEndIndex);
 
   // console.log(tempColumns);
   var tempMatrix = [];
