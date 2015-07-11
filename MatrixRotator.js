@@ -206,6 +206,11 @@ MatrixRotator.prototype.rotateStep = function(direction, radius) {
   var isInInnerBox = this.isInInnerBox;
   var isInOuterBox = this.isInOuterBox;
 
+  console.log("valid start " + validStartIndex);
+  console.log("valid end " + validEndIndex);
+  console.log("invalid start " + invalidStartIndex);
+  console.log("invalid end " + invalidEndIndex);
+
   // console.log(tempColumns);
   var tempMatrix = [];
 
@@ -238,89 +243,56 @@ MatrixRotator.prototype.rotateStep = function(direction, radius) {
 
   function rotateClockwise(inMatrix, radius, tempMatrix) {
 
-    // var tempMatrix = [];
-
-    // for(var i = 0; i < tempColumns.length; i++) {
-
-    //   tempMatrix.push(tempColumns[i].reverse());
-    // }
-
-    if(radius === 0) {
-
-      // console.log(tempMatrix);
-
-      return tempMatrix;
-    }
-
     for(var i = 0; i < tempMatrix.length; i++) {
 
       for(var j = 0; j < tempMatrix.length; j++) {
 
-        if((i + j) < tempMatrix.length && i < j) { //top rules
+        // console.log(i + " " + j + " " + inMatrix[i][j]);
 
-          if(i === j) { //skip center
+        if((i + j) < tempMatrix.length && j < tempMatrix.length - 1) { //top rules
 
-            tempMatrix[i][j] = this.matrix[i][j];
+          if(i === j && inMatrix.length%2 === 1) { //skip center
+
+            tempMatrix[i][j] = inMatrix[i][j];
 
           } else {
 
             //try up
-            if((i - 1) > -1 && tempMatrix[i-1][j] !== NaN) {
+            if((i - 1) > -1 && isNaN(tempMatrix[i-1][j])) {
 
-              tempMatrix[i-1][j] = this.matrix[i][j];
+              tempMatrix[i-1][j] = inMatrix[i][j];
 
             //try right
-            } else { //if( (j + 1) > tempMatrix.length - 1 && tempMatrix[i][j+1] !== NaN) {
+            } else if( (j + 1) < tempMatrix.length && isNaN(tempMatrix[i][j+1])) {
 
-              tempMatrix[i][j+1] = this.matrix[i][j];
+              tempMatrix[i][j+1] = inMatrix[i][j];
+
+            } else { //move down
+
+              tempMatrix[i + 1][j] = inMatrix[i][j];
             }
           }
 
         } else { //bottom rules
 
-          if(i === j) { //skip center
+          if(i === j && inMatrix.length%2 === 1) { //skip center
 
-            tempMatrix[i][j] = this.matrix[i][j];
+            tempMatrix[i][j] = inMatrix[i][j];
+
           } else {
 
             //try left
-            if((j - 1) > -1 && tempMatrix[i][j-1] !== NaN) {
+            if((j - 1) > -1 && isNaN(tempMatrix[i][j-1])) {
 
-              tempMatrix[i][j-1] = this.matrix[i][j];
+              tempMatrix[i][j-1] = inMatrix[i][j];
 
             } else { //try down
 
-              tempMatrix[i+1][j] = this.matrix[i][j];
+              tempMatrix[i+1][j] = inMatrix[i][j];
             }
           }
-        };
-
-        console.log(tempMatrix);
-
-        // if(!isInOuterBox(i, j, validStartIndex, validEndIndex) || isInInnerBox(i, j, invalidStartIndex, invalidEndIndex)) {
-
-        //   tempMatrix[i][j] = inMatrix[i][j];
-        // }
+        }
       }
-    }
-
-    // console.log(tempMatrix);
-    return tempMatrix;
-  };
-
-  function rotateCounterClockwise(inMatrix, radius, tempMatrix) {
-
-    // var tempMatrix = [];
-
-    // for(var i = 0; i < tempColumns.length; i++) {
-
-    //   tempMatrix.push(tempColumns[tempColumns.length - 1 - i]);
-    // }
-
-    if(radius === 0) {
-
-      // console.log(tempMatrix);
-      return tempMatrix;
     }
 
     for(var i = 0; i < tempMatrix.length; i++) {
@@ -333,6 +305,101 @@ MatrixRotator.prototype.rotateStep = function(direction, radius) {
         }
       }
     }
+
+    return tempMatrix;
+  };
+
+  function rotateCounterClockwise(inMatrix, radius, tempMatrix) {
+
+    for(var i = 0; i < tempMatrix.length; i++) {
+
+      for(var j = 0; j < tempMatrix.length; j++) {
+
+        console.log(i + " " + j + " " + inMatrix[i][j]);
+
+        if((i + j) < tempMatrix.length && i < tempMatrix.length - 1) { //top rules
+
+          if(i === j && inMatrix.length%2 === 1) { //skip center
+
+            tempMatrix[i][j] = inMatrix[i][j];
+
+          } else {
+
+            //try left
+            if((j - 1) > -1 && isNaN(tempMatrix[i][j-1])) {
+
+              tempMatrix[i][j-1] = inMatrix[i][j];
+
+            } else if( (i + 1) > tempMatrix.length-1 && isNaN(tempMatrix[i+1][j])) { //try down
+
+              tempMatrix[i + 1][j] = inMatrix[i][j];
+            }
+            //try up
+            // if((i - 1) > -1 && isNaN(tempMatrix[i-1][j])) {
+
+            //   tempMatrix[i-1][j] = inMatrix[i][j];
+
+            //try right
+            // } else if( (j + 1) < tempMatrix.length && isNaN(tempMatrix[i][j+1])) {
+
+            //   tempMatrix[i][j+1] = inMatrix[i][j];
+
+            // } else { //move down
+
+            //   tempMatrix[i + 1][j] = inMatrix[i][j];
+            // }
+          }
+
+        } else { //bottom rules
+
+          if(i === j && inMatrix.length%2 === 1) { //skip center
+
+            tempMatrix[i][j] = inMatrix[i][j];
+
+          } else {
+
+            //try right
+            if((j + 1) > tempMatrix.length -1 && isNaN(tempMatrix[i][j+1])) {
+
+              tempMatrix[i][j+1] = inMatrix[i][j];
+
+            } else if((i - 1) < 0 && isNaN(tempMatrix[i][j -1])) {
+
+              tempMatrix[i-1][j] = inMatrix[i][j];
+            }
+            //try up
+
+            //try left
+            // if((j - 1) > -1 && isNaN(tempMatrix[i][j-1])) {
+
+            //   tempMatrix[i][j-1] = inMatrix[i][j];
+
+            // } else { //try down
+
+            //   console.log(i + " " + j + " " + inMatrix[i][j]);
+
+            //   tempMatrix[i+1][j] = inMatrix[i][j];
+          }
+        }
+
+        console.log(tempMatrix);
+      }
+    }
+
+    // console.log(tempMatrix);
+
+    for(var i = 0; i < tempMatrix.length; i++) {
+
+      for(var j = 0; j < tempMatrix.length; j++) {
+
+        if(!isInOuterBox(i, j, validStartIndex, validEndIndex) || isInInnerBox(i, j, invalidStartIndex, invalidEndIndex)) {
+
+          tempMatrix[i][j] = inMatrix[i][j];
+        }
+      }
+    }
+
+    // console.log(tempMatrix);
 
     // console.log(tempMatrix);
     return tempMatrix;

@@ -113,29 +113,28 @@ describe("The 2Advanced Matrix Rotator", function () {
   });
 
 
-  it("can rotate layer 3 Clockwise", function () {
-    matrixRotator.rotateStep(Direction.CW, 3);
-    matrixRotator.matrix.should.be.deep.equal([
-                                              [ 7, 1, 2, 3, 4, 5],
-                                              [13, 8, 9, 10,11,6],
-                                              [19,14,15,16,17,12],
-                                              [25,20,21,22,23,18],
-                                              [31,26,27,28,29,24],
-                                              [32,33,34,35,36,30]
-                                            ]);
-  });
-
-  // it("can rotate layer 2 CounterClockwise", function () {
-  //   matrixRotator.rotateStep(Direction.CCW, 2);
-  //   matrixRotator.matrix.should.be.deep.equal([
-  //                                             [ 1, 2, 3, 4, 5, 6],
-  //                                             [ 7, 9,10,11,17,12],
-  //                                             [13, 8,15,16,23,18],
-  //                                             [19,14,21,22,29,24],
-  //                                             [25,20,26,27,28,30],
-  //                                             [31,32,33,34,35,36]
+  // it("can rotate layer 3 Clockwise", function () {
+  //   matrixRotator.rotateStep(Direction.CW, 3).should.be.deep.equal([
+  //                                             [ 7, 1, 2, 3, 4, 5],
+  //                                             [13, 8, 9, 10,11,6],
+  //                                             [19,14,15,16,17,12],
+  //                                             [25,20,21,22,23,18],
+  //                                             [31,26,27,28,29,24],
+  //                                             [32,33,34,35,36,30]
   //                                           ]);
   // });
+
+  it("can rotate layer 2 CounterClockwise", function () {
+    matrixRotator.rotateStep(Direction.CCW, 2);
+    matrixRotator.matrix.should.be.deep.equal([
+                                              [ 1, 2, 3, 4, 5, 6],
+                                              [ 7, 9,10,11,17,12],
+                                              [13, 8,15,16,23,18],
+                                              [19,14,21,22,29,24],
+                                              [25,20,26,27,28,30],
+                                              [31,32,33,34,35,36]
+                                            ]);
+  });
 
   // it("can rotate layer 1 Clockwise", function () {
 
@@ -164,36 +163,36 @@ describe("The 2Advanced Matrix Rotator", function () {
   //                                           ]);
   // });
 
-  describe("validates arguments", function () {
+  // describe("validates arguments", function () {
 
-    it("should accept layer ranges 1 - 3", function() {
-      (function () {
-        matrixRotator.rotateStep(Direction.CW, 0)
-      }).should.throw(RangeError);
-      (function () {
-        matrixRotator.rotateStep(Direction.CW, 4)
-      }).should.throw(RangeError);
-      (function () {
-        matrixRotator.rotateStep(Direction.CW, 3)
-      }).should.not.throw(RangeError);
-    });
-    it("should only rotate CW or CCW", function() {
-      (function () {
-        matrixRotator.rotateStep('left', 1)
-      }).should.throw(Error);
-      (function () {
-        matrixRotator.rotateStep('Direction.CW', 2)
-      }).should.throw(Error);
-      (function () {
-        matrixRotator.rotateStep('potato', 1)
-      }).should.throw(Error);
-      (function () {
-        matrixRotator.rotateStep(1, 1)
-      }).should.throw(Error);
-      (function () {
-        matrixRotator.rotateStep(Direction.CW, 3);
-        matrixRotator.rotateStep(Direction.CCW, 2);
-      }).should.not.throw(Error);
-    });
-  });
+  //   it("should accept layer ranges 1 - 3", function() {
+  //     (function () {
+  //       matrixRotator.rotateStep(Direction.CW, 0)
+  //     }).should.throw(RangeError);
+  //     (function () {
+  //       matrixRotator.rotateStep(Direction.CW, 4)
+  //     }).should.throw(RangeError);
+  //     (function () {
+  //       matrixRotator.rotateStep(Direction.CW, 3)
+  //     }).should.not.throw(RangeError);
+  //   });
+  //   it("should only rotate CW or CCW", function() {
+  //     (function () {
+  //       matrixRotator.rotateStep('left', 1)
+  //     }).should.throw(Error);
+  //     (function () {
+  //       matrixRotator.rotateStep('Direction.CW', 2)
+  //     }).should.throw(Error);
+  //     (function () {
+  //       matrixRotator.rotateStep('potato', 1)
+  //     }).should.throw(Error);
+  //     (function () {
+  //       matrixRotator.rotateStep(1, 1)
+  //     }).should.throw(Error);
+  //     (function () {
+  //       matrixRotator.rotateStep(Direction.CW, 3);
+  //       matrixRotator.rotateStep(Direction.CCW, 2);
+  //     }).should.not.throw(Error);
+  //   });
+  // });
 });
